@@ -1,38 +1,44 @@
-import { Grid, GridItem } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
-
-interface IChallenge {
-  name: string;
-  route: string;
-  completed: boolean;
-  locked: boolean;
-}
+import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { IChallenge, useChallengeStore } from './store/mainstore';
 
 export const App = (): JSX.Element => {
-  const challenges: IChallenge[] = [
-    {
-      name: 'puzzle',
-      route: 'c1',
-      completed: false,
-      locked: false,
-    },
-    {
-      name: 'fight',
-      route: 'c2',
-      completed: false,
-      locked: false,
-    },
-  ];
+  const navigate = useNavigate();
+  const { challenges } = useChallengeStore();
+
+  if (challenges.every((challenge) => challenge.status === 'completed')) {
+    return <Box>Completed</Box>;
+  }
+
+  const getBgColor = (challenge: IChallenge): string => {
+    if (challenge.status === 'completed') {
+      return 'green.500';
+    } else if (challenge.status === 'locked') {
+      return 'gray.500';
+    }
+    return 'yellow.500';
+  };
 
   return (
-    <Grid templateColumns="repeat(3, 1fr)" gap={1} w="100%" h="100%">
-      {challenges.map((challenge) => (
-        <Link to={challenge.route}>
-          <GridItem w="100%" h="100%" bg="gray.500">
-            {challenge.name}
+    <Grid templateColumns="repeat(3, 1fr)" gap={1} w="100%" h="100%" p={2}>
+      {challenges.map((challenge) => {
+        const unlocked: boolean = challenge.status === 'unlocked';
+        return (
+          <GridItem
+            w="100%"
+            h="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg={getBgColor(challenge)}
+            onClick={unlocked ? () => navigate(challenge.name) : undefined}
+            cursor={unlocked ? 'pointer' : 'default'}
+            _hover={unlocked ? { bg: 'yellow.600' } : undefined}
+          >
+            {challenge.status === 'locked' ? '???' : challenge.name}
           </GridItem>
-        </Link>
-      ))}
+        );
+      })}
     </Grid>
   );
 };

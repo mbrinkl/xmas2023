@@ -1,7 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { App } from './App';
-import { Challenge1 } from './components/Challenge1';
-import { Challenge2 } from './components/Challenge2';
+import { JigsawChallenge } from './components/JigsawChallenge';
+import { PunchoutChallenge } from './components/PunchoutChallenge';
+import { ChainReactionChallenge } from './components/ChainReactionChallenge';
 
 export const router = createBrowserRouter([
   {
@@ -9,11 +10,19 @@ export const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: '/c1',
-    element: <Challenge1 />,
+    path: '/jigsaw',
+    element: <JigsawChallenge />,
   },
   {
-    path: '/c2',
-    element: <Challenge2 />,
+    path: '/punchout',
+    element: <PunchoutChallenge />,
+  },
+  {
+    path: '/sudoku',
+    element: <PunchoutChallenge />,
+  },
+  {
+    path: '/chain-reaction',
+    element: <ChainReactionChallenge />,
   },
 ]);

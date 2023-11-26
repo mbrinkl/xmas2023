@@ -9,6 +9,7 @@ import {
 import { ChallengeContainer } from './ChallengeContainer';
 import { CSS } from '@dnd-kit/utilities';
 import { Box } from '@chakra-ui/react';
+import { useChallengeStore } from '../store/mainstore';
 
 interface IDroppable {
   id: string;
@@ -50,19 +51,21 @@ const Draggable = (props: IDraggable) => {
   );
 };
 
-export const Challenge2 = (): JSX.Element => {
+export const PunchoutChallenge = (): JSX.Element => {
+  const challenge = useChallengeStore(
+    (s) => s.challenges.find((challenge) => challenge.name === 'punchout')!,
+  );
+
   const containers = ['A', 'B', 'C'];
   const [parent, setParent] = useState<UniqueIdentifier | null>(null);
   const draggable = <Draggable id="draggable" boxerName="asdf" />;
 
   function handleDragEnd({ over }: DragEndEvent) {
-    // If the item is dropped over a container, set it as the parent
-    // otherwise reset the parent to `null`
     setParent(over ? over.id : null);
   }
 
   return (
-    <ChallengeContainer>
+    <ChallengeContainer challenge={challenge}>
       <DndContext onDragEnd={handleDragEnd}>
         {parent === null ? draggable : null}
 

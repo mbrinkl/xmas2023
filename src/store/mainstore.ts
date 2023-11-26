@@ -1,20 +1,58 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+// import { persist } from 'zustand/middleware';
 
-interface CompletionStatusStore {
-  bears: number;
-  addABear: (by: number) => void;
+export interface IChallenge {
+  name: string;
+  status: 'locked' | 'unlocked' | 'completed';
 }
 
-export const useBearStore = create<CompletionStatusStore>()(
-  persist(
-    (set, get) => ({
-      bears: 0,
-      addABear: () => set({ bears: get().bears + 1 }),
-    }),
-    {
-      name: 'food-storage', // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+interface IChallengeStore {
+  challenges: IChallenge[];
+  updateChallenge: (updatedChallenge: IChallenge) => void;
+}
+
+export const useChallengeStore = create<IChallengeStore>()(
+  //persist(
+  (set) => ({
+    challenges: [
+      {
+        name: 'chain-reaction',
+        status: 'unlocked',
+      },
+      {
+        name: 'punchout',
+        status: 'locked',
+      },
+      {
+        name: 'jigsaw',
+        status: 'unlocked',
+      },
+      {
+        name: 'wordle',
+        status: 'locked',
+      },
+      {
+        name: 'sudoku',
+        status: 'locked',
+      },
+      {
+        name: 'rubix',
+        status: 'locked',
+      },
+    ],
+    updateChallenge: (updatedChallenge) => {
+      set((state) => ({
+        challenges: state.challenges.map((challenge) => {
+          if (challenge.name !== updatedChallenge.name) {
+            return challenge;
+          }
+          return updatedChallenge;
+        }),
+      }));
     },
-  ),
+  }),
+  // {
+  //   name: 'challenge-store',
+  // },
+  //),
 );
