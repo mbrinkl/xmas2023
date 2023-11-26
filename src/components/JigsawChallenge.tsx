@@ -3,8 +3,8 @@ import { Canvas, painters, outline } from 'headbreaker';
 import { useEffect, useRef, useState } from 'react';
 import { ChallengeContainer } from './ChallengeContainer';
 import { useChallengeStore } from '../store/mainstore';
-import shrekPuzzleImage from '../assets/shrek-puzzle.jpg';
 import { Box } from '@chakra-ui/react';
+import shrekPuzzleImage from '../assets/shrek-puzzle.jpg';
 
 export const JigsawChallenge = (): JSX.Element => {
   const challenge = useChallengeStore(
@@ -19,37 +19,38 @@ export const JigsawChallenge = (): JSX.Element => {
 
     const image = new Image();
     image.src = shrekPuzzleImage;
+    image.onload = () => {
+      const canvas = new Canvas(puzzleRef.current!.id, {
+        width: 600,
+        height: 400,
+        image,
+        pieceSize: 50,
+        proximity: 20,
+        borderFill: 10,
+        strokeWidth: 2,
+        lineSoftness: 0.18,
+        painter: new painters.Konva(),
+        outline: new outline.Rounded(),
+        preventOffstageDrag: true,
+        fixed: true,
+      });
 
-    const canvas = new Canvas(puzzleRef.current.id, {
-      width: 600,
-      height: 400,
-      image,
-      pieceSize: 50,
-      proximity: 20,
-      borderFill: 10,
-      strokeWidth: 2,
-      lineSoftness: 0.18,
-      painter: new painters.Konva(),
-      outline: new outline.Rounded(),
-      preventOffstageDrag: true,
-      fixed: true,
-    });
+      canvas.adjustImagesToPuzzleHeight();
 
-    canvas.adjustImagesToPuzzleHeight();
+      canvas.autogenerate({
+        horizontalPiecesCount: 6,
+        verticalPiecesCount: 6,
+      });
 
-    canvas.autogenerate({
-      horizontalPiecesCount: 6,
-      verticalPiecesCount: 6,
-    });
+      canvas.shuffle(0.7);
 
-    canvas.shuffle(0.7);
+      canvas.draw();
+      canvas.attachSolvedValidator();
 
-    canvas.draw();
-    canvas.attachSolvedValidator();
-
-    canvas.onValid(() => {
-      setCompleted(true);
-    });
+      canvas.onValid(() => {
+        setCompleted(true);
+      });
+    };
   }, []);
 
   return (
