@@ -3,7 +3,7 @@ import { App } from './App';
 import { JigsawChallenge } from './components/JigsawChallenge';
 import { PunchoutChallenge } from './components/PunchoutChallenge';
 import { ChainReactionChallenge } from './components/ChainReactionChallenge';
-import { WordleChallenge } from './components/WorldeChallenge';
+import { WordleChallenge } from './components/WordleChallenge';
 import { RubiksChallenge } from './components/RubiksChallenge';
 import { SudokuChallenge } from './components/SudokuChallenge';
 
