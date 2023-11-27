@@ -29,7 +29,7 @@ export const useChallengeStore = create<IChallengeStore>()(
       },
       {
         name: 'wordle',
-        status: 'locked',
+        status: 'unlocked',
       },
       {
         name: 'sudoku',

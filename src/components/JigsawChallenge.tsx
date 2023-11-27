@@ -24,7 +24,7 @@ export const JigsawChallenge = (): JSX.Element => {
         width: 600,
         height: 400,
         image,
-        pieceSize: 50,
+        pieceSize: 40,
         proximity: 20,
         borderFill: 10,
         strokeWidth: 2,
@@ -42,7 +42,7 @@ export const JigsawChallenge = (): JSX.Element => {
         verticalPiecesCount: 6,
       });
 
-      canvas.shuffle(0.7);
+      canvas.shuffleGrid();
 
       canvas.draw();
       canvas.attachSolvedValidator();
