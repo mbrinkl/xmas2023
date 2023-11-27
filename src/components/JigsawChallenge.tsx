@@ -3,7 +3,7 @@ import { Canvas, painters, outline } from 'headbreaker';
 import { useEffect, useRef, useState } from 'react';
 import { ChallengeContainer } from './ChallengeContainer';
 import { useChallengeStore } from '../store/mainstore';
-import { Box } from '@chakra-ui/react';
+import { Box, useMediaQuery } from '@chakra-ui/react';
 import shrekPuzzleImage from '../assets/shrek-puzzle.jpg';
 
 export const JigsawChallenge = (): JSX.Element => {
@@ -11,6 +11,7 @@ export const JigsawChallenge = (): JSX.Element => {
     (s) => s.challenges.find((challenge) => challenge.name === 'jigsaw')!,
   );
   const puzzleRef = useRef<HTMLDivElement>(null);
+  const [isLargeSize] = useMediaQuery('(min-width: 600px)');
 
   const [completed, setCompleted] = useState(false);
 
@@ -21,11 +22,11 @@ export const JigsawChallenge = (): JSX.Element => {
     image.src = shrekPuzzleImage;
     image.onload = () => {
       const canvas = new Canvas(puzzleRef.current!.id, {
-        width: 600,
+        width: isLargeSize ? 600 : 300,
         height: 400,
         image,
-        pieceSize: 40,
-        proximity: 20,
+        pieceSize: isLargeSize ? 40 : 20,
+        proximity: isLargeSize ? 20 : 10,
         borderFill: 10,
         strokeWidth: 2,
         lineSoftness: 0.18,
@@ -51,7 +52,7 @@ export const JigsawChallenge = (): JSX.Element => {
         setCompleted(true);
       });
     };
-  }, []);
+  }, [isLargeSize]);
 
   return (
     <ChallengeContainer challenge={challenge}>
