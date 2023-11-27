@@ -40,7 +40,17 @@ const DroppableAnswerZone = (props: IDroppable) => {
   };
 
   return (
-    <Box ref={setNodeRef} style={style}>
+    <Box
+      ref={setNodeRef}
+      style={style}
+      borderWidth={1}
+      borderRadius={15}
+      w="100%"
+      h={9}
+      lineHeight={9}
+      textAlign="center"
+      boxSizing="content-box"
+    >
       {props.children}
     </Box>
   );
@@ -61,23 +71,22 @@ const Draggable = (props: IDraggable) => {
   return (
     <Box
       ref={setNodeRef}
-      style={style}
+      style={{ ...style, touchAction: 'none' }}
       {...listeners}
       {...attributes}
-      borderWidth={2}
+      borderWidth={1}
       borderColor="blue.500"
       borderRadius={15}
       textAlign="center"
       px={3}
-      py={1}
+      lineHeight={9}
+      textOverflow="clip"
+      overflow="hidden"
+      whiteSpace="nowrap"
     >
       {props.id}
     </Box>
   );
-};
-
-const Placeholder = (props: { id: string }) => {
-  return <Box h={9}>{props.id}</Box>;
 };
 
 const zones: string[] = [
@@ -115,7 +124,7 @@ export const PunchoutChallenge = (): JSX.Element => {
   const challenge = useChallengeStore(
     (s) => s.challenges.find((challenge) => challenge.name === 'punchout')!,
   );
-  const [isLargerThan850] = useMediaQuery('(min-width: 850px)');
+  const [isLargeScreen] = useMediaQuery('(min-width: 850px)');
 
   const draggables: JSX.Element[] = shuffledBoxers.map((boxer) => (
     <Draggable key={boxer} id={boxer} />
@@ -128,13 +137,18 @@ export const PunchoutChallenge = (): JSX.Element => {
   function handleDragEnd({ over, active }: DragEndEvent) {
     setParents((prev) => {
       const map = new Map(prev);
-      if (!over?.id) {
+      if (!over || over.id === 'bank') {
         map.delete(active.id);
       } else {
         // todo: handle answer dropzone swap
         map.forEach((_, key) => {
           if (map.get(key) === over.id) {
-            map.delete(key);
+            const currParentOfActive = map.get(active.id);
+            if (currParentOfActive) {
+              map.set(key, currParentOfActive);
+            } else {
+              map.delete(key);
+            }
           }
         });
         map.set(active.id, over.id);
@@ -144,21 +158,21 @@ export const PunchoutChallenge = (): JSX.Element => {
   }
 
   return (
-    <ChallengeContainer challenge={challenge}>
+    <ChallengeContainer challenge={challenge} noFlexCenter>
       <DndContext onDragEnd={handleDragEnd}>
-        <VStack display="block">
+        <VStack spacing={5} mt={75}>
           <Grid
-            templateColumns={`repeat(${isLargerThan850 ? 4 : 2}, 1fr)`}
-            gap={1}
+            templateColumns={`repeat(${isLargeScreen ? 4 : 2}, 1fr)`}
+            gap={3}
           >
             {zones.map((zone) => (
-              <VStack key={zone} w={200}>
+              <VStack key={zone} w={isLargeScreen ? 200 : 125}>
                 <Text>{zone}</Text>
                 {[...'1234'].map((num) => (
                   <DroppableAnswerZone key={num} id={`${zone}${num}`}>
                     {draggables.find(
                       (d) => parents.get(d.props.id) === `${zone}${num}`,
-                    ) ?? <Placeholder key={num} id={num} />}
+                    ) ?? num}
                   </DroppableAnswerZone>
                 ))}
               </VStack>
