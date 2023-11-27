@@ -21,7 +21,7 @@ export const useChallengeStore = create<IChallengeStore>()(
       },
       {
         name: 'punchout',
-        status: 'locked',
+        status: 'unlocked',
       },
       {
         name: 'jigsaw',
@@ -33,11 +33,11 @@ export const useChallengeStore = create<IChallengeStore>()(
       },
       {
         name: 'sudoku',
-        status: 'locked',
+        status: 'unlocked',
       },
       {
-        name: 'rubix',
-        status: 'locked',
+        name: 'rubiks',
+        status: 'unlocked',
       },
     ],
     completeChallenge: (completedChallenge) => {
