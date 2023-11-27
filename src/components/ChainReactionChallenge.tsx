@@ -1,8 +1,7 @@
 import { HStack, PinInput, PinInputField, VStack } from '@chakra-ui/react';
-import { ChallengeContainer } from './ChallengeContainer';
+import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
 import { useChallengeStore } from '../store/mainstore';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface IChainWord {
   answer: string;
@@ -46,24 +45,18 @@ const initialChainWords: IChainWord[] = [
 export const ChainReactionChallenge = (): JSX.Element => {
   // const pinInputRefs = useRef<HTMLElement[]>([]);
 
-  const navigate = useNavigate();
-  const completeChallenge = useChallengeStore((s) => s.completeChallenge);
   const challenge = useChallengeStore(
     (s) =>
       s.challenges.find((challenge) => challenge.name === 'chain-reaction')!,
   );
   const [chainWords, setChainWords] = useState<IChainWord[]>(initialChainWords);
+  const [progress, setProgress] = useState<ProgressStatus>('in-progress');
 
   useEffect(() => {
-    let id: number | undefined;
     if (chainWords.every((chainWord) => chainWord.completed)) {
-      id = setTimeout(() => {
-        completeChallenge(challenge);
-        navigate('/');
-      }, 2000);
+      setProgress('success');
     }
-    return () => clearTimeout(id);
-  }, [chainWords, challenge, navigate, completeChallenge]);
+  }, [chainWords]);
 
   const onChangePinInput = (chainWord: IChainWord, value: string) => {
     setChainWords((prev) =>
@@ -85,10 +78,10 @@ export const ChainReactionChallenge = (): JSX.Element => {
   };
 
   return (
-    <ChallengeContainer challenge={challenge}>
+    <ChallengeContainer challenge={challenge} progress={progress}>
       <VStack align="start">
         {chainWords.map((w, index) => (
-          <HStack>
+          <HStack key={w.answer}>
             <PinInput
               // ref={el => pinInputRefs.current[index] = el}
               value={w.value}
@@ -104,8 +97,8 @@ export const ChainReactionChallenge = (): JSX.Element => {
                 onChangePinInput(w, value);
               }}
             >
-              {[...w.answer].map(() => (
-                <PinInputField />
+              {[...w.answer].map((_, index) => (
+                <PinInputField key={index} />
               ))}
             </PinInput>
           </HStack>

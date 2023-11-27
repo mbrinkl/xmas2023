@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { HStack, Kbd, PinInput, PinInputField, VStack } from '@chakra-ui/react';
-import { ChallengeContainer } from './ChallengeContainer';
+import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
 import { useChallengeStore } from '../store/mainstore';
 
 export const WordleChallenge = (): JSX.Element => {
@@ -8,6 +8,7 @@ export const WordleChallenge = (): JSX.Element => {
     (s) => s.challenges.find((c) => c.name === 'wordle')!,
   );
 
+  const [progress, setProgress] = useState<ProgressStatus>('in-progress');
   const [currentRow, setCurrentRow] = useState<number>(0);
   const [currentGuess, setCurrentGuess] = useState<string>('');
   const [guesses, setGuesses] = useState<string[]>(Array(5).fill(''));
@@ -16,13 +17,11 @@ export const WordleChallenge = (): JSX.Element => {
   const keyboardRows: string[][] = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
+    ['Backspace', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Enter'],
   ];
 
   const submitCurrentGuess = useCallback(() => {
-    console.log('submitting', currentGuess);
     if (currentGuess.length !== 5) return;
-    console.log('submitting 2');
     setGuesses((prev) =>
       prev.map((g, index) => {
         if (currentRow !== index) {
@@ -56,6 +55,12 @@ export const WordleChallenge = (): JSX.Element => {
     },
     [submitCurrentGuess],
   );
+
+  useEffect(() => {
+    if (guesses.includes(answer)) {
+      setProgress('success');
+    }
+  }, [guesses]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeydown);
@@ -98,7 +103,7 @@ export const WordleChallenge = (): JSX.Element => {
   };
 
   return (
-    <ChallengeContainer challenge={challenge}>
+    <ChallengeContainer challenge={challenge} progress={progress}>
       <VStack>
         <VStack>
           {guesses.map((guess, index) => (

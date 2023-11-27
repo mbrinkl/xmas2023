@@ -1,19 +1,40 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Container, Flex, IconButton, Text } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import { IChallenge } from '../store/mainstore';
+import { Box, Container, Flex, IconButton, Text } from '@chakra-ui/react';
+import { Link, useNavigate } from 'react-router-dom';
+import { IChallenge, useChallengeStore } from '../store/mainstore';
+import { useEffect } from 'react';
+
+export type ProgressStatus = 'in-progress' | 'failure' | 'success';
 
 interface IBodyContainer {
   noFlexCenter?: boolean;
+  progress: ProgressStatus;
   children: React.ReactNode;
 }
 
 const BodyContainer = (props: IBodyContainer): JSX.Element => {
+  const colors: Record<ProgressStatus, string> = {
+    'in-progress': 'yellow.500',
+    failure: 'red.500',
+    success: 'green.500',
+  };
+
+  const mainBody = (
+    <Box
+      p={3}
+      borderWidth={2}
+      borderRadius={15}
+      borderColor={colors[props.progress]}
+    >
+      {props.children}
+    </Box>
+  );
+
   return props.noFlexCenter ? (
-    <>{props.children}</>
+    mainBody
   ) : (
     <Flex h="100%" alignItems="center">
-      {props.children}
+      {mainBody}
     </Flex>
   );
 };
@@ -21,20 +42,40 @@ const BodyContainer = (props: IBodyContainer): JSX.Element => {
 interface IChallengeContainer {
   challenge: IChallenge;
   noFlexCenter?: boolean;
+  progress: ProgressStatus;
   children: React.ReactNode;
 }
 
 export const ChallengeContainer = (props: IChallengeContainer): JSX.Element => {
   const navigate = useNavigate();
+  const completeChallenge = useChallengeStore((s) => s.completeChallenge);
 
-  let body: React.ReactNode;
+  useEffect(() => {
+    let id: number | undefined;
+    if (props.progress === 'success') {
+      id = setTimeout(() => {
+        completeChallenge(props.challenge);
+        navigate('/');
+      }, 2000);
+    }
+    return () => clearTimeout(id);
+  }, [props.progress, props.challenge, navigate, completeChallenge]);
 
-  if (props.challenge.status === 'locked') {
-    body = <Text>Challenge Locked</Text>;
-  } else if (props.challenge.status === 'completed') {
-    body = <Text>Challenge Already Completed</Text>;
-  } else {
-    body = props.children;
+  if (props.challenge.status === 'locked' && props.progress !== 'success') {
+    return (
+      <Text>
+        Challenge Locked <Link to="/">Go Home</Link>
+      </Text>
+    );
+  } else if (
+    props.challenge.status === 'completed' &&
+    props.progress !== 'success'
+  ) {
+    return (
+      <Text>
+        Challenge Already Completed <Link to="/">Go Home</Link>
+      </Text>
+    );
   }
 
   return (
@@ -47,7 +88,12 @@ export const ChallengeContainer = (props: IChallengeContainer): JSX.Element => {
         left="15px"
         onClick={() => navigate('/')}
       />
-      <BodyContainer noFlexCenter={props.noFlexCenter}>{body}</BodyContainer>
+      <BodyContainer
+        noFlexCenter={props.noFlexCenter}
+        progress={props.progress}
+      >
+        {props.children}
+      </BodyContainer>
     </Container>
   );
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -6,7 +6,7 @@ import {
   useDraggable,
   useDroppable,
 } from '@dnd-kit/core';
-import { ChallengeContainer } from './ChallengeContainer';
+import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
 import { CSS } from '@dnd-kit/utilities';
 import { Box, Grid, Text, VStack, Wrap, useMediaQuery } from '@chakra-ui/react';
 import { useChallengeStore } from '../store/mainstore';
@@ -125,16 +125,37 @@ export const PunchoutChallenge = (): JSX.Element => {
     (s) => s.challenges.find((challenge) => challenge.name === 'punchout')!,
   );
   const [isLargeScreen] = useMediaQuery('(min-width: 850px)');
+  const [progress, setProgress] = useState<ProgressStatus>('in-progress');
+  const [parents, setParents] = useState<
+    Map<UniqueIdentifier, UniqueIdentifier>
+  >(new Map());
 
   const draggables: JSX.Element[] = shuffledBoxers.map((boxer) => (
     <Draggable key={boxer} id={boxer} />
   ));
 
-  const [parents, setParents] = useState<
-    Map<UniqueIdentifier, UniqueIdentifier>
-  >(new Map());
+  useEffect(() => {
+    if (parents.size === boxers.length) {
+      let isCorrect = true;
+      parents.forEach((value, key) => {
+        const arrIndex = boxers.findIndex((b) => b === key.toString());
+        const zoneIndex = arrIndex % 4;
+        const zone = zones[Math.floor(arrIndex / 4)];
+        if (value !== `${zone}${zoneIndex + 1}`) {
+          isCorrect = false;
+        }
+      });
+      if (isCorrect) {
+        setProgress('success');
+      } else {
+        setProgress('failure');
+      }
+    } else {
+      setProgress('in-progress');
+    }
+  }, [parents]);
 
-  function handleDragEnd({ over, active }: DragEndEvent) {
+  const handleDragEnd = ({ over, active }: DragEndEvent) => {
     setParents((prev) => {
       const map = new Map(prev);
       if (!over || over.id === 'bank') {
@@ -155,10 +176,10 @@ export const PunchoutChallenge = (): JSX.Element => {
       }
       return map;
     });
-  }
+  };
 
   return (
-    <ChallengeContainer challenge={challenge} noFlexCenter>
+    <ChallengeContainer challenge={challenge} progress={progress} noFlexCenter>
       <DndContext onDragEnd={handleDragEnd}>
         <VStack spacing={5} mt={75}>
           <Grid

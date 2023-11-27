@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { App } from './App';
+import { Home } from './components/Home';
 import { JigsawChallenge } from './components/JigsawChallenge';
 import { PunchoutChallenge } from './components/PunchoutChallenge';
 import { ChainReactionChallenge } from './components/ChainReactionChallenge';
@@ -10,7 +10,7 @@ import { SudokuChallenge } from './components/SudokuChallenge';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Home />,
   },
   {
     path: '/jigsaw',

@@ -51,7 +51,7 @@ export const RubiksChallenge = (): JSX.Element => {
   console.log(cubeString.substring(8, 17));
 
   return (
-    <ChallengeContainer challenge={challenge}>
+    <ChallengeContainer challenge={challenge} progress="in-progress">
       <Canvas>
         <OrbitControls />
         <ambientLight />
