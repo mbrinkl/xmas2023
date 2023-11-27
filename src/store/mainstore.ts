@@ -8,7 +8,7 @@ export interface IChallenge {
 
 interface IChallengeStore {
   challenges: IChallenge[];
-  updateChallenge: (updatedChallenge: IChallenge) => void;
+  completeChallenge: (completedChallenge: IChallenge) => void;
 }
 
 export const useChallengeStore = create<IChallengeStore>()(
@@ -40,13 +40,13 @@ export const useChallengeStore = create<IChallengeStore>()(
         status: 'locked',
       },
     ],
-    updateChallenge: (updatedChallenge) => {
+    completeChallenge: (completedChallenge) => {
       set((state) => ({
         challenges: state.challenges.map((challenge) => {
-          if (challenge.name !== updatedChallenge.name) {
+          if (challenge.name !== completedChallenge.name) {
             return challenge;
           }
-          return updatedChallenge;
+          return { ...challenge, status: 'completed' };
         }),
       }));
     },

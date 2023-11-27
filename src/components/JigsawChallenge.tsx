@@ -5,15 +5,29 @@ import { ChallengeContainer } from './ChallengeContainer';
 import { useChallengeStore } from '../store/mainstore';
 import { Box, useMediaQuery } from '@chakra-ui/react';
 import shrekPuzzleImage from '../assets/shrek-puzzle.jpg';
+import { useNavigate } from 'react-router-dom';
 
 export const JigsawChallenge = (): JSX.Element => {
+  const completeChallenge = useChallengeStore((s) => s.completeChallenge);
   const challenge = useChallengeStore(
     (s) => s.challenges.find((challenge) => challenge.name === 'jigsaw')!,
   );
   const puzzleRef = useRef<HTMLDivElement>(null);
   const [isLargeSize] = useMediaQuery('(min-width: 600px)');
+  const navigate = useNavigate();
 
   const [completed, setCompleted] = useState(false);
+
+  useEffect(() => {
+    let id: number | undefined;
+    if (completed) {
+      id = setTimeout(() => {
+        completeChallenge(challenge);
+        navigate('/');
+      }, 2000);
+    }
+    return () => clearTimeout(id);
+  }, [completed, challenge, completeChallenge, navigate]);
 
   useEffect(() => {
     if (!puzzleRef.current) return;
@@ -22,12 +36,11 @@ export const JigsawChallenge = (): JSX.Element => {
     image.src = shrekPuzzleImage;
     image.onload = () => {
       const canvas = new Canvas(puzzleRef.current!.id, {
-        width: isLargeSize ? 600 : 300,
-        height: 400,
+        width: isLargeSize ? 600 : 320,
+        height: 450,
         image,
-        pieceSize: isLargeSize ? 40 : 20,
-        proximity: isLargeSize ? 20 : 10,
-        borderFill: 10,
+        pieceSize: isLargeSize ? 40 : 35,
+        proximity: 5,
         strokeWidth: 2,
         lineSoftness: 0.18,
         painter: new painters.Konva(),
@@ -62,6 +75,7 @@ export const JigsawChallenge = (): JSX.Element => {
         p={2}
         borderWidth={2}
         borderRadius={5}
+        backgroundColor="gray.300"
         borderColor={completed ? 'green.500' : 'red.500'}
       />
     </ChallengeContainer>

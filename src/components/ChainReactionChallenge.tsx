@@ -47,7 +47,7 @@ export const ChainReactionChallenge = (): JSX.Element => {
   // const pinInputRefs = useRef<HTMLElement[]>([]);
 
   const navigate = useNavigate();
-  const updateChallenge = useChallengeStore((s) => s.updateChallenge);
+  const completeChallenge = useChallengeStore((s) => s.completeChallenge);
   const challenge = useChallengeStore(
     (s) =>
       s.challenges.find((challenge) => challenge.name === 'chain-reaction')!,
@@ -58,12 +58,12 @@ export const ChainReactionChallenge = (): JSX.Element => {
     let id: number | undefined;
     if (chainWords.every((chainWord) => chainWord.completed)) {
       id = setTimeout(() => {
-        updateChallenge({ ...challenge, status: 'completed' });
+        completeChallenge(challenge);
         navigate('/');
       }, 2000);
     }
     return () => clearTimeout(id);
-  }, [chainWords, challenge, navigate, updateChallenge]);
+  }, [chainWords, challenge, navigate, completeChallenge]);
 
   const onChangePinInput = (chainWord: IChainWord, value: string) => {
     setChainWords((prev) =>
