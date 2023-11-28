@@ -7,18 +7,6 @@ import { useChallengeStore } from '../store/mainstore';
 import { DeleteIcon } from '@chakra-ui/icons';
 
 type Board = ReturnType<typeof generate>;
-const CHUNK_SIZE = 9;
-
-const chunkArray = <T,>(arr: T[], chunkSize: number): T[][] => {
-  const chunks: T[][] = [];
-  let i = 0;
-
-  while (i < arr.length) {
-    chunks.push(arr.slice(i, (i += chunkSize)));
-  }
-
-  return chunks;
-};
 
 const getNonNullIndices = (arr: unknown[]) => {
   const indices = [];
@@ -52,48 +40,41 @@ const ControlButton = (props: IControlButton): JSX.Element => {
 };
 
 interface ISudokuSection {
-  sectionNumber: number;
-  vals: (number | null)[];
+  index: number;
+  val: number | null;
   disabledIndices: number[];
   selectedIndex: number | null;
   setSelectedIndex: (index: number) => void;
 }
 
 const SudokuSection = (props: ISudokuSection): JSX.Element => {
+  const isDisabled = props.disabledIndices.includes(props.index);
+  const isSelected = props.selectedIndex === props.index;
   return (
-    <Grid templateColumns="repeat(3, 1fr)" w={100} textAlign="center" m={0.5}>
-      {props.vals.map((v, index) => {
-        const boardIndex = index + props.sectionNumber * CHUNK_SIZE;
-        const isDisabled = props.disabledIndices.includes(boardIndex);
-        const isSelected = props.selectedIndex === boardIndex;
-        return (
-          <Box
-            key={`${index}section${props.sectionNumber}`}
-            w={33}
-            h={33}
-            borderWidth={1}
-            borderColor="gray.500"
-            cursor={isDisabled ? 'default' : 'pointer'}
-            bg={isSelected ? 'blue.200' : 'white'}
-            _hover={isDisabled ? undefined : { bg: 'blue.200' }}
-            onClick={
-              isDisabled
-                ? undefined
-                : () => {
-                    props.setSelectedIndex(boardIndex);
-                  }
+    <Box
+      w={33}
+      h={33}
+      borderWidth={1}
+      borderColor="gray.500"
+      cursor={isDisabled ? 'default' : 'pointer'}
+      bg={isSelected ? 'blue.200' : 'white'}
+      _hover={isDisabled ? undefined : { bg: 'blue.200' }}
+      onClick={
+        isDisabled
+          ? undefined
+          : () => {
+              props.setSelectedIndex(props.index);
             }
-          >
-            <Text
-              fontWeight="bold"
-              textColor={isDisabled ? 'black' : 'blue.500'}
-            >
-              {v}
-            </Text>
-          </Box>
-        );
-      })}
-    </Grid>
+      }
+    >
+      <Text
+        textAlign="center"
+        fontWeight="bold"
+        textColor={isDisabled ? 'black' : 'blue.500'}
+      >
+        {props.val}
+      </Text>
+    </Box>
   );
 };
 
@@ -186,12 +167,17 @@ export const SudokuChallenge = (): JSX.Element => {
         <Spinner />
       ) : (
         <VStack>
-          <Grid templateColumns="repeat(3, 1fr)" bg="gray.500" p={0.5}>
-            {chunkArray(userBoard, CHUNK_SIZE).map((chunk, index) => (
+          <Grid
+            templateRows="1fr 1fr 1.1fr 1fr 1fr 1.1fr 1fr 1fr 1fr"
+            templateColumns="1fr 1fr 1.1fr 1fr 1fr 1.1fr 1fr 1fr 1fr"
+            bg="gray.500"
+            p={1}
+          >
+            {userBoard.map((val, index) => (
               <SudokuSection
                 key={index}
-                vals={chunk}
-                sectionNumber={index}
+                val={val}
+                index={index}
                 disabledIndices={disabledIndices}
                 selectedIndex={selectedIndex}
                 setSelectedIndex={setSelectedIndex}
@@ -216,7 +202,7 @@ export const SudokuChallenge = (): JSX.Element => {
                 );
               }}
             >
-              <DeleteIcon boxSize={4} pb={1} />
+              <DeleteIcon boxSize={4} pb={1} color="red.500" />
             </ControlButton>
           </Wrap>
         </VStack>
