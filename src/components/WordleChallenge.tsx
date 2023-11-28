@@ -154,9 +154,32 @@ export const WordleChallenge = (): JSX.Element => {
   ): string | undefined => {
     if (!guess) return undefined;
 
-    if (guess[letterIndex] === answer[letterIndex]) {
-      return 'green.500';
-    } else if (answer.includes(guess[letterIndex])) {
+    const letter = guess[letterIndex];
+    const numLettersInAnswer = answer.split(letter).length - 1;
+
+    if (letter === answer[letterIndex]) return 'green.500';
+    if (numLettersInAnswer === 0) return undefined;
+
+    let numCorrect = 0;
+    const misplacedIndices: number[] = [];
+    for (let i = 0; i < answer.length; i++) {
+      if (guess[i] === letter) {
+        console.log('A');
+        if (answer[i] === letter) {
+          console.log('B');
+          numCorrect++;
+        } else {
+          console.log('C');
+          misplacedIndices.push(i);
+        }
+      }
+    }
+
+    while (misplacedIndices.length + numCorrect > numLettersInAnswer) {
+      misplacedIndices.pop();
+    }
+
+    if (misplacedIndices.includes(letterIndex)) {
       return 'yellow.500';
     }
 
@@ -177,6 +200,7 @@ export const WordleChallenge = (): JSX.Element => {
               >
                 {[...answer].map((_, pinIndex) => (
                   <PinInputField
+                    key={pinIndex}
                     backgroundColor={getPinInputBgColor(guess, pinIndex)}
                     onMouseDown={(e) => e.preventDefault()}
                     cursor="default"
