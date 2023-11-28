@@ -31,7 +31,7 @@ const ControlButton = (props: IControlButton): JSX.Element => {
       px={2}
       fontWeight="bold"
       cursor="pointer"
-      _hover={{ bg: 'gray.300' }}
+      _hover={{ bg: 'gray.200' }}
       onClick={props.onClick}
     >
       {props.children}
@@ -44,12 +44,15 @@ interface ISudokuSection {
   val: number | null;
   disabledIndices: number[];
   selectedIndex: number | null;
+  selectedValue: number | null;
   setSelectedIndex: (index: number) => void;
 }
 
 const SudokuSection = (props: ISudokuSection): JSX.Element => {
   const isDisabled = props.disabledIndices.includes(props.index);
   const isSelected = props.selectedIndex === props.index;
+  const isValueSelected =
+    props.val !== null && props.selectedValue == props.val;
   return (
     <Box
       w={33}
@@ -57,8 +60,7 @@ const SudokuSection = (props: ISudokuSection): JSX.Element => {
       borderWidth={1}
       borderColor="gray.500"
       cursor={isDisabled ? 'default' : 'pointer'}
-      bg={isSelected ? 'blue.200' : 'white'}
-      _hover={isDisabled ? undefined : { bg: 'blue.200' }}
+      bg={isSelected ? 'blue.300' : isValueSelected ? 'blue.100' : 'white'}
       onClick={
         isDisabled
           ? undefined
@@ -70,7 +72,7 @@ const SudokuSection = (props: ISudokuSection): JSX.Element => {
       <Text
         textAlign="center"
         fontWeight="bold"
-        textColor={isDisabled ? 'black' : 'blue.500'}
+        textColor={isDisabled ? 'black' : 'blue.600'}
       >
         {props.val}
       </Text>
@@ -88,29 +90,25 @@ export const SudokuChallenge = (): JSX.Element => {
   const [solution, setSolution] = useState<Board | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
+  const setUserBoardAtIndex = (value: number | null, index: number) => {
+    setUserBoard(
+      (prev) =>
+        prev?.map((i, ind) => {
+          if (ind !== index) {
+            return i;
+          }
+          return value;
+        }) as Board,
+    );
+  };
+
   const handleKeydown = useCallback(
     (e: KeyboardEvent) => {
       if (selectedIndex === null) return;
       if (e.key === 'Backspace') {
-        setUserBoard(
-          (prev) =>
-            prev?.map((i, index) => {
-              if (index !== selectedIndex) {
-                return i;
-              }
-              return null;
-            }) as Board,
-        );
+        setUserBoardAtIndex(null, selectedIndex);
       } else if (/^[1-9]$/i.test(e.key)) {
-        setUserBoard(
-          (prev) =>
-            prev?.map((i, index) => {
-              if (index !== selectedIndex) {
-                return i;
-              }
-              return Number(e.key);
-            }) as Board,
-        );
+        setUserBoardAtIndex(Number(e.key), selectedIndex);
       }
     },
     [selectedIndex],
@@ -141,11 +139,7 @@ export const SudokuChallenge = (): JSX.Element => {
 
   // solve detection
   useEffect(() => {
-    if (
-      userBoard === null ||
-      solution === null ||
-      userBoard.some((x) => x === null)
-    ) {
+    if (!userBoard || !solution || userBoard.some((x) => x === null)) {
       setProgress('in-progress');
     } else if (JSON.stringify(userBoard) === JSON.stringify(solution)) {
       setProgress('success');
@@ -154,12 +148,10 @@ export const SudokuChallenge = (): JSX.Element => {
     }
   }, [solution, userBoard]);
 
-  const disabledIndices: number[] = useMemo(() => {
-    if (board) {
-      return getNonNullIndices(board);
-    }
-    return [];
-  }, [board]);
+  const disabledIndices: number[] = useMemo(
+    () => (board ? getNonNullIndices(board) : []),
+    [board],
+  );
 
   return (
     <ChallengeContainer challenge={challenge} progress={progress}>
@@ -180,6 +172,7 @@ export const SudokuChallenge = (): JSX.Element => {
                 index={index}
                 disabledIndices={disabledIndices}
                 selectedIndex={selectedIndex}
+                selectedValue={selectedIndex ? userBoard[selectedIndex] : null}
                 setSelectedIndex={setSelectedIndex}
               />
             ))}
