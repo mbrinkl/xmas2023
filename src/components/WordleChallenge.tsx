@@ -164,12 +164,9 @@ export const WordleChallenge = (): JSX.Element => {
     const misplacedIndices: number[] = [];
     for (let i = 0; i < answer.length; i++) {
       if (guess[i] === letter) {
-        console.log('A');
         if (answer[i] === letter) {
-          console.log('B');
           numCorrect++;
         } else {
-          console.log('C');
           misplacedIndices.push(i);
         }
       }
