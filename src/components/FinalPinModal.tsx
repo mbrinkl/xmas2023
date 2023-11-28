@@ -11,7 +11,7 @@ interface IFinalPinModal {
 }
 
 export const FinalPinModal = (props: IFinalPinModal): JSX.Element => {
-  const pin = '1234';
+  const pin = '5427';
   return (
     <Modal isOpen={props.isOpen} onClose={() => {}}>
       <ModalOverlay />

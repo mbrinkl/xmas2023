@@ -79,7 +79,7 @@ export const ChallengeContainer = (props: IChallengeContainer): JSX.Element => {
   }
 
   return (
-    <Container maxW="4xl" h="100%" centerContent>
+    <Container maxW="4xl" h="100%" centerContent userSelect="none">
       <IconButton
         aria-label="Back"
         icon={<ArrowBackIcon />}
