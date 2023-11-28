@@ -17,34 +17,24 @@ interface IDroppable {
 }
 
 const DroppableBank = (props: IDroppable): JSX.Element => {
-  const { isOver, setNodeRef } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: props.id,
   });
-  const style = {
-    opacity: isOver ? 1 : 0.5,
-  };
 
-  return (
-    <Wrap ref={setNodeRef} style={style}>
-      {props.children}
-    </Wrap>
-  );
+  return <Wrap ref={setNodeRef}>{props.children}</Wrap>;
 };
 
 const DroppableAnswerZone = (props: IDroppable) => {
   const { isOver, setNodeRef } = useDroppable({
     id: props.id,
   });
-  const style = {
-    opacity: isOver ? 1 : 0.5,
-  };
 
   return (
     <Box
       ref={setNodeRef}
-      style={style}
       borderWidth={1}
       borderRadius={15}
+      borderColor={isOver ? 'gray.300' : 'gray.500'}
       w="100%"
       h={9}
       lineHeight={9}
