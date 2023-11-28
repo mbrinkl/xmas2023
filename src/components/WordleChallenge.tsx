@@ -8,7 +8,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
-import { useChallengeStore } from '../store/mainstore';
+import { useChallengeStore } from '../store/challengeStore';
 import wordleWords from '../assets/text/wordleWords.txt?raw';
 import wordleValidGuesses from '../assets/text/wordleValidGuesses.txt?raw';
 

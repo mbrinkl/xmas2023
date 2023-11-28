@@ -1,7 +1,7 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Container, Flex, IconButton, Text } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IChallenge, useChallengeStore } from '../store/mainstore';
+import { IChallenge, useChallengeStore } from '../store/challengeStore';
 import { useEffect } from 'react';
 
 export type ProgressStatus = 'in-progress' | 'failure' | 'success';

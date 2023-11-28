@@ -3,7 +3,7 @@ import { generate } from 'sudoku-core';
 import SudokuWorker from '../workers/SudokuWorker?worker';
 import { Box, Grid, Spinner, Text, VStack, Wrap } from '@chakra-ui/react';
 import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
-import { useChallengeStore } from '../store/mainstore';
+import { useChallengeStore } from '../store/challengeStore';
 import { DeleteIcon } from '@chakra-ui/icons';
 
 type Board = ReturnType<typeof generate>;

@@ -2,9 +2,9 @@
 import { Canvas, painters, outline } from 'headbreaker';
 import { useEffect, useRef, useState } from 'react';
 import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
-import { useChallengeStore } from '../store/mainstore';
+import { useChallengeStore } from '../store/challengeStore';
 import { Box, useMediaQuery } from '@chakra-ui/react';
-import shrekPuzzleImage from '../assets/shrek-puzzle.jpg';
+import shrekPuzzleImage from '../assets/images/shrekPuzzle.jpg';
 
 export const JigsawChallenge = (): JSX.Element => {
   const challenge = useChallengeStore(

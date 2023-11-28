@@ -9,7 +9,7 @@ import {
 import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
 import { CSS } from '@dnd-kit/utilities';
 import { Box, Grid, Text, VStack, Wrap, useMediaQuery } from '@chakra-ui/react';
-import { useChallengeStore } from '../store/mainstore';
+import { useChallengeStore } from '../store/challengeStore';
 
 interface IDroppable {
   id: string;

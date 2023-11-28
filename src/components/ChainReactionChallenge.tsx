@@ -1,6 +1,6 @@
 import { HStack, PinInput, PinInputField, VStack } from '@chakra-ui/react';
 import { ChallengeContainer, ProgressStatus } from './ChallengeContainer';
-import { useChallengeStore } from '../store/mainstore';
+import { useChallengeStore } from '../store/challengeStore';
 import { useEffect, useState } from 'react';
 
 interface IChainWord {
