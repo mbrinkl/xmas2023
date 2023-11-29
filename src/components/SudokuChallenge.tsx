@@ -52,7 +52,7 @@ const SudokuSection = (props: ISudokuSection): JSX.Element => {
   const isDisabled = props.disabledIndices.includes(props.index);
   const isSelected = props.selectedIndex === props.index;
   const isValueSelected =
-    props.val !== null && props.selectedValue == props.val;
+    props.val !== null && props.selectedValue === props.val;
   return (
     <Box
       w={33}
@@ -172,7 +172,9 @@ export const SudokuChallenge = (): JSX.Element => {
                 index={index}
                 disabledIndices={disabledIndices}
                 selectedIndex={selectedIndex}
-                selectedValue={selectedIndex ? userBoard[selectedIndex] : null}
+                selectedValue={
+                  selectedIndex !== null ? userBoard[selectedIndex] : null
+                }
                 setSelectedIndex={setSelectedIndex}
               />
             ))}
