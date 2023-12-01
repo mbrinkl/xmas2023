@@ -39,7 +39,7 @@ const ControlButton = (props: IControlButton): JSX.Element => {
   );
 };
 
-interface ISudokuSection {
+interface ISudokuBox {
   index: number;
   val: number | null;
   disabledIndices: number[];
@@ -48,7 +48,7 @@ interface ISudokuSection {
   setSelectedIndex: (index: number) => void;
 }
 
-const SudokuSection = (props: ISudokuSection): JSX.Element => {
+const SudokuBox = (props: ISudokuBox): JSX.Element => {
   const isDisabled = props.disabledIndices.includes(props.index);
   const isSelected = props.selectedIndex === props.index;
   const isValueSelected =
@@ -166,7 +166,7 @@ export const SudokuChallenge = (): JSX.Element => {
             p={1}
           >
             {userBoard.map((val, index) => (
-              <SudokuSection
+              <SudokuBox
                 key={index}
                 val={val}
                 index={index}

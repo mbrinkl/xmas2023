@@ -190,10 +190,7 @@ export const PunchoutChallenge = (): JSX.Element => {
             ))}
           </Grid>
           <DroppableBank id="bank">
-            {draggables.filter(
-              (d) =>
-                !parents.has(d.props.id) || parents.get(d.props.id) === 'bank',
-            )}
+            {draggables.filter((d) => !parents.has(d.props.id))}
           </DroppableBank>
         </VStack>
       </DndContext>
